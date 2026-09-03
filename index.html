@@ -96,8 +96,9 @@ body.fr .meta-en{display:none}body.fr .meta-fr{display:block}
 .qty input{width:46px;height:36px;border:none;text-align:center;font-size:.95rem;font-weight:600;font-variant-numeric:tabular-nums;-moz-appearance:textfield;background:transparent}
 .qty input:focus{outline:2px solid var(--navy);outline-offset:-2px;border-radius:4px}
 .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.qty.kgqty input{width:50px;text-align:right;padding-right:1px}
-.qkg{font-size:.68rem;font-weight:700;color:var(--muted);padding:0 8px 0 2px;line-height:1;align-self:center;pointer-events:none;white-space:nowrap}
+.qnum{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.qty.kgqty .qnum input{width:52px;text-align:center;padding:0 4px}
+.qkg{position:absolute;right:5px;bottom:4px;font-size:.5rem;font-weight:700;color:var(--muted);line-height:1;pointer-events:none;white-space:nowrap;letter-spacing:.02em}
 .row.active{background:#fbfaf6}.row.active .qty{border-color:var(--navy)}
 .orderbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--navy);color:#fff;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(0,0,0,.18)}
 .kgwarn{display:none;align-items:center;gap:8px;max-width:1120px;margin:0 auto 10px;padding:9px 13px;background:#fdecea;border:1px solid #f2b8b0;border-radius:9px;color:#b3261e;font-size:.79rem;font-weight:600;line-height:1.35}
@@ -145,10 +146,10 @@ body.fr .meta-en{display:none}body.fr .meta-fr{display:block}
 .sv-cat{display:inline-block;font-weight:800;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 18px;border-radius:999px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:88vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sv-stage{position:relative;display:flex;align-items:center;justify-content:center;gap:14px;width:100%;max-width:1120px}
 .sv-frame{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .16s ease,opacity .16s ease;will-change:transform}
-.sv-img-wrap{width:92vw;max-width:1125px;height:78vh;display:flex;align-items:center;justify-content:center}
-/* width/height:auto => the image renders at most at its native pixel size, so the
-   +25% frame enlarges small photos only up to the point they'd start to blur. */
-.sv-img{width:auto;height:auto;max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 18px 54px rgba(0,0,0,.55);background:#fff;user-select:none;-webkit-user-drag:none}
+.sv-img-wrap{width:94vw;max-width:1300px;height:84vh;display:flex;align-items:center;justify-content:center}
+/* Source photos are low-res (~240px), so fitSV() scales them up to a bounded factor
+   of native size — visibly bigger on click, with only mild softening. */
+.sv-img{max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 18px 54px rgba(0,0,0,.55);background:#fff;user-select:none;-webkit-user-drag:none;image-rendering:auto}
 /* in-viewer add-to-cart */
 .sv-cart{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:14px}
 .sv-qty{display:flex;align-items:center;border:1px solid rgba(255,255,255,.35);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.08)}
@@ -179,7 +180,7 @@ body.fr .meta-en{display:none}body.fr .meta-fr{display:block}
 @media(max-width:640px){
  .sv-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;font-size:1.6rem;background:rgba(255,255,255,.18)}
  .sv-arrow.prev{left:0}.sv-arrow.next{right:0}
- .sv-stage{gap:0}.sv-img-wrap{width:96vw;height:66vh}.sv-name{font-size:1.12rem}.sv-hint{display:none}
+ .sv-stage{gap:0}.sv-img-wrap{width:97vw;height:74vh}.sv-name{font-size:1.12rem}.sv-hint{display:none}
 }
 .foot{max-width:1120px;margin:6px auto 0;padding:0 18px 30px;font-size:.74rem;color:var(--muted)}
 .foot a{color:var(--navy);font-weight:600}
@@ -244,6 +245,7 @@ body.pl .cart-nm .plname{display:block}
 .cart-qty button{width:31px;height:30px;border:none;background:var(--bg);font-size:1.05rem;cursor:pointer;color:var(--navy);line-height:1}
 .cart-qty button:hover{background:#eceff5}
 .cart-qty span{min-width:52px;text-align:center;font-size:.88rem;font-weight:700;font-variant-numeric:tabular-nums;padding:0 3px}
+.cart-qty .ckg{font-size:.56em;font-weight:700;color:var(--muted);letter-spacing:.02em;margin-left:1px}
 .cart-lt{min-width:88px;text-align:right;font-size:.95rem;font-weight:700;font-variant-numeric:tabular-nums}
 .cart-flav{margin-top:6px;background:#fbfaf6;border:1px dashed var(--line);border-radius:8px;padding:6px 10px}
 .cart-flav.need{border-color:#c9a227;background:#fdf7e3}
@@ -961,6 +963,7 @@ function renderSV(){
  svCat.textContent=catLabel(c,lang).replace(/ \(.*\)/,'');
  svCat.style.background=c.accent;svCat.style.color=c.ink||'#fff';
  svImg.src=s.img;svImg.alt=nameIn(it,lang);
+ if(svImg.complete&&svImg.naturalWidth){fitSV();}else{svImg.style.width='';svImg.style.height='';}
  svName.textContent=nameIn(it,lang);
  const meta=[it.sz||'',originIn(it.o,lang),unitIn(it.u,lang)].filter(Boolean).join(' \u00B7 ');
  svMeta.textContent=meta;
@@ -988,6 +991,18 @@ function renderSV(){
   svAdded.textContent=q>0?(SV_INCART[lang]||SV_INCART.en):'';
  }
 }
+/* Enlarge the clicked photo: display it as large as the frame allows, but no more
+   than SV_UPSCALE x its native size so low-res source photos stay acceptable. */
+const SV_UPSCALE=2.4;
+function fitSV(){
+ const nw=svImg.naturalWidth,nh=svImg.naturalHeight;if(!nw||!nh)return;
+ const wrap=svImg.parentElement;const fw=wrap.clientWidth||nw,fh=wrap.clientHeight||nh;
+ const capW=Math.min(fw,nw*SV_UPSCALE),capH=Math.min(fh,nh*SV_UPSCALE);
+ const ar=nw/nh;let w=capW,h=w/ar;if(h>capH){h=capH;w=h*ar;}
+ svImg.style.width=Math.round(w)+'px';svImg.style.height=Math.round(h)+'px';
+}
+svImg.addEventListener('load',fitSV);
+window.addEventListener('resize',()=>{if(sv.classList.contains('show'))fitSV();});
 function svCurKey(){return SLIDES[svIdx]?SLIDES[svIdx].key:null;}
 function svRefreshAdded(){const k=svCurKey();if(!k)return;const q=(state[k]&&state[k].qty)||0;
  svInp.value=fmtQ(q);svAdded.textContent=q>0?(SV_INCART[lang]||SV_INCART.en):'';}
@@ -1119,8 +1134,10 @@ CATEGORIES.forEach(c=>{
   const minus=document.createElement('button');minus.type='button';minus.textContent='−';
   const inp=document.createElement('input');inp.type='number';inp.min='0';inp.step=isKg?(it.w||'any'):'1';inp.value='0';inp.inputMode=isKg?'decimal':'numeric';
   const plus=document.createElement('button');plus.type='button';plus.textContent='+';
-  qty.append(minus,inp,plus);
-  if(isKg){const kg=document.createElement('span');kg.className='qkg';kg.textContent='kg';kg.setAttribute('aria-hidden','true');qty.append(kg);}
+  if(isKg){const wrap=document.createElement('span');wrap.className='qnum';
+   const kg=document.createElement('span');kg.className='qkg';kg.textContent='kg';kg.setAttribute('aria-hidden','true');
+   wrap.append(inp,kg);qty.append(minus,wrap,plus);}
+  else{qty.append(minus,inp,plus);}
   const setQ=v=>{v=isKg?Math.max(0,Math.round(v*1000)/1000):Math.max(0,Math.round(v));state[key].qty=v;clampAlloc(state[key]);inp.value=fmtQ(v);row.classList.toggle('active',v>0);recalc();};
   rowAPI[key]={setQ:setQ,step:step,isKg:isKg};
   minus.onclick=()=>setQ(state[key].qty-step);
@@ -1436,7 +1453,8 @@ function cartItemRow(k,s){
  nm.appendChild(sub);
  const q=document.createElement('div');q.className='cart-qty';
  const mi=document.createElement('button');mi.type='button';mi.textContent='−';
- const qv=document.createElement('span');qv.textContent=s.isKg?fmtQ(s.qty)+' kg':fmtQ(s.qty);
+ const qv=document.createElement('span');
+ if(s.isKg){qv.innerHTML=fmtQ(s.qty)+'<sub class="ckg">kg</sub>';}else{qv.textContent=fmtQ(s.qty);}
  const pl2=document.createElement('button');pl2.type='button';pl2.textContent='+';
  mi.onclick=()=>cartAdjust(k,-1);pl2.onclick=()=>cartAdjust(k,+1);
  q.append(mi,qv,pl2);
