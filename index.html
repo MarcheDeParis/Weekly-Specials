@@ -70,7 +70,7 @@ main{max-width:1120px;margin:14px auto 0;padding:0 18px}
 .rows{display:block}
 .row{display:grid;grid-template-columns:58px minmax(0,1fr) auto auto;gap:11px;align-items:center;padding:7px 14px;border-top:1px solid var(--line)}
 .row:first-child{border-top:none}.row.hidden{display:none}
-.thumb{width:58px;height:58px;border-radius:10px;object-fit:cover;background:#efece4;display:block;cursor:zoom-in;border:1px solid var(--line)}
+.thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#efece4;display:block;cursor:zoom-in;border:1px solid var(--line)}
 .thumb.ph{display:flex;align-items:center;justify-content:center;cursor:default;background:linear-gradient(135deg,#26375c,#1b2a4a);color:#8ea2c8;font-weight:700;font-size:1.45rem;border:none}
 .pname{font-size:.92rem;font-weight:600}
 .pinfo{min-width:0}
@@ -145,8 +145,25 @@ body.fr .meta-en{display:none}body.fr .meta-fr{display:block}
 .sv-cat{display:inline-block;font-weight:800;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 18px;border-radius:999px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:88vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sv-stage{position:relative;display:flex;align-items:center;justify-content:center;gap:14px;width:100%;max-width:1120px}
 .sv-frame{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .16s ease,opacity .16s ease;will-change:transform}
-.sv-img-wrap{width:88vw;max-width:900px;height:62vh;display:flex;align-items:center;justify-content:center}
-.sv-img{max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 18px 54px rgba(0,0,0,.55);background:#fff;user-select:none;-webkit-user-drag:none}
+.sv-img-wrap{width:92vw;max-width:1125px;height:78vh;display:flex;align-items:center;justify-content:center}
+/* width/height:auto => the image renders at most at its native pixel size, so the
+   +25% frame enlarges small photos only up to the point they'd start to blur. */
+.sv-img{width:auto;height:auto;max-width:100%;max-height:100%;border-radius:14px;box-shadow:0 18px 54px rgba(0,0,0,.55);background:#fff;user-select:none;-webkit-user-drag:none}
+/* in-viewer add-to-cart */
+.sv-cart{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:14px}
+.sv-qty{display:flex;align-items:center;border:1px solid rgba(255,255,255,.35);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.08)}
+.sv-qty button{width:44px;height:42px;border:none;background:rgba(255,255,255,.12);color:#fff;font-size:1.3rem;line-height:1;cursor:pointer}
+.sv-qty button:active{background:rgba(255,255,255,.28)}
+.sv-qty input{width:60px;height:42px;border:none;text-align:center;font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums;background:transparent;color:#fff;-moz-appearance:textfield}
+.sv-qty input:focus{outline:2px solid #c9a227;outline-offset:-2px}
+.sv-qty input::-webkit-outer-spin-button,.sv-qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.sv-qty .sv-kg{padding:0 12px;color:#c9a227;font-weight:800;font-size:.85rem;align-self:center}
+.sv-added{min-height:18px;font-size:.82rem;font-weight:700;color:#8fe0a5;letter-spacing:.02em}
+.sv-flavnote{margin-top:14px;text-align:center;color:rgba(255,255,255,.8);font-size:.85rem;max-width:88vw}
+.sv-flavbtn{margin-top:8px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:#fff;font-weight:700;font-size:.85rem;padding:9px 18px;border-radius:999px;cursor:pointer}
+.sv-flavbtn:active{background:rgba(255,255,255,.25)}
+.row.flash{animation:rowflash 1.4s ease}
+@keyframes rowflash{0%,100%{background:transparent}20%,60%{background:#fff5d6}}
 .sv-cap{color:#fff;text-align:center;margin-top:16px;max-width:88vw}
 .sv-name{font-family:Georgia,'Times New Roman',serif;font-size:1.28rem;font-weight:700;line-height:1.25}
 .sv-meta{color:rgba(255,255,255,.68);font-size:.85rem;margin-top:5px}
@@ -162,7 +179,7 @@ body.fr .meta-en{display:none}body.fr .meta-fr{display:block}
 @media(max-width:640px){
  .sv-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;font-size:1.6rem;background:rgba(255,255,255,.18)}
  .sv-arrow.prev{left:0}.sv-arrow.next{right:0}
- .sv-stage{gap:0}.sv-img-wrap{width:94vw;height:54vh}.sv-name{font-size:1.12rem}.sv-hint{display:none}
+ .sv-stage{gap:0}.sv-img-wrap{width:96vw;height:66vh}.sv-name{font-size:1.12rem}.sv-hint{display:none}
 }
 .foot{max-width:1120px;margin:6px auto 0;padding:0 18px 30px;font-size:.74rem;color:var(--muted)}
 .foot a{color:var(--navy);font-weight:600}
@@ -254,6 +271,42 @@ body.pl .cart-nm .plname{display:block}
 .cart-actions{display:flex;gap:8px}
 .cart-actions .btn{flex:1;padding:9px 8px;font-size:.88rem}
 .cart-actions .btn.mail{border:1px solid var(--line)}
+/* --- checkout details gate: the cart blurs behind a prompt asking who's ordering --- */
+.cart-stage{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;transition:filter .2s}
+.cart-card.gated .cart-stage{filter:blur(4px);pointer-events:none;user-select:none}
+.cart-gate{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;padding:16px;border-radius:14px;background:rgba(247,246,242,.35)}
+.cart-card.gated .cart-gate{display:flex}
+.cart-gate-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 60px rgba(15,20,35,.4);width:min(440px,100%);max-height:calc(96vh - 34px);overflow-y:auto;padding:22px 20px 20px;text-align:center}
+.cart-gate-card h4{margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:1.24rem;color:var(--navy)}
+.gate-sub{margin:0 0 16px;font-size:.86rem;color:var(--muted);line-height:1.45}
+.gate-seg{display:flex;gap:8px;margin-bottom:14px}
+.gate-seg-btn{flex:1;padding:12px 10px;border:1.5px solid var(--line);background:var(--bg);color:var(--navy);border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;line-height:1.25;transition:.15s}
+.gate-seg-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.gate-fields{display:flex;flex-direction:column;gap:10px;text-align:left}
+.gate-fields>input,.gate-newfields input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:var(--bg);color:var(--ink);font-family:inherit}
+.gate-fields>input:focus,.gate-newfields input:focus{outline:2px solid var(--navy);border-color:var(--navy)}
+.gate-fields input.err,.gate-newfields input.err{border-color:var(--red);outline:2px solid var(--red);background:#fff}
+.gate-newfields{display:none;flex-direction:column;gap:10px}
+.gate-newfields.show{display:flex}
+.gate-err{color:var(--red);font-size:.82rem;font-weight:600;margin:11px 0 0;min-height:1em;display:none}
+.gate-err.show{display:block}
+.cart-gate .gate-go{margin-top:14px;width:100%;padding:14px;font-size:1rem;min-height:50px}
+.cart-who{display:none;align-items:center;gap:8px;flex:0 0 auto;font-size:.85rem;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 12px;max-width:100%}
+.cart-who.show{display:flex}
+.cart-who-ic{font-size:1rem;line-height:1}
+.cart-who-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.cart-who-edit{flex:0 0 auto;background:none;border:none;color:#b07d10;font-weight:700;font-size:.82rem;cursor:pointer;text-decoration:underline;padding:2px 4px;white-space:nowrap}
+@media (max-width:640px){
+ .cart-gate{padding:10px}
+ .cart-gate-card{padding:18px 15px 16px;width:100%;max-height:calc(100dvh - 20px)}
+ .cart-gate-card h4{font-size:1.12rem}
+ .gate-sub{font-size:.85rem}
+ .gate-seg{flex-direction:column;gap:7px}
+ .gate-seg-btn{padding:13px;min-height:48px}
+ .gate-fields>input,.gate-newfields input{padding:14px;font-size:16px}
+ .cart-gate .gate-go{padding:15px;min-height:54px}
+ .cart-who-name{max-width:120px}
+}
 /* --- auto-compaction: applied by fitCart() when fewer than 8 lines would be visible --- */
 .cart-card.dense{padding-top:8px}
 .cart-card.dense .cart-head{padding:0 18px 5px;gap:14px}
@@ -335,7 +388,7 @@ main{margin-top:10px}
 .sent-when{font-size:.86rem;padding:11px 12px}
 .cat-note{padding:7px 12px;font-size:.72rem}
 .row{grid-template-columns:53px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:11px;row-gap:1px;padding:6px 12px;line-height:1.2}
-.thumb{width:53px;height:53px;grid-row:1 / span 2;align-self:center}
+.thumb{width:58px;height:58px;grid-row:1 / span 2;align-self:center}
 .thumb.ph{font-size:1.25rem}
 .pname{grid-column:2;grid-row:1;font-size:.85rem;line-height:1.2}
 .plname{font-size:.75rem;margin-left:5px}
@@ -385,19 +438,42 @@ main{margin-top:10px}
     <div class="sv-name" id="svName"></div>
     <div class="sv-meta" id="svMeta"></div>
     <div class="sv-price" id="svPrice"></div>
+    <div class="sv-cart" id="svCart">
+      <div class="sv-qty" id="svQtyWrap">
+        <button type="button" id="svMinus" aria-label="Less">&minus;</button>
+        <input id="svInp" type="number" min="0" value="0" inputmode="numeric">
+        <button type="button" id="svPlus" aria-label="More">+</button>
+        <span class="sv-kg" id="svKg">kg</span>
+      </div>
+      <div class="sv-added" id="svAdded"></div>
+    </div>
+    <div class="sv-flavnote" id="svFlavNote" style="display:none">
+      <span id="svFlavTxt"></span>
+      <div><button type="button" class="sv-flavbtn" id="svFlavBtn"></button></div>
+    </div>
   </div>
   <div class="sv-hint" id="svHint"></div>
 </div>
-<div class="modal" id="cartModal"><div class="modal-card cart-card"><button class="modal-x" id="cartX" aria-label="Close">&times;</button>
+<div class="modal" id="cartModal"><div class="modal-card cart-card" id="cartCard"><button class="modal-x" id="cartX" aria-label="Close">&times;</button>
 <div class="cart-head"><div class="cart-head-l"><h3 id="cartTitle"></h3><p class="cart-head-p" id="cartDesc"></p></div>
-<div class="cart-name"><input id="cartCust" type="text" autocomplete="name"><button type="button" class="newcust-toggle" id="newcustToggle" aria-expanded="false"></button></div></div>
-<div class="newcust cart-newcust" id="newcustBox"><input id="cFirst" type="text" autocomplete="given-name"><input id="cSurname" type="text" autocomplete="family-name"><input id="cPhone" type="tel" autocomplete="tel"><input id="cEmail" type="email" autocomplete="email"><input id="cAddr" type="text" autocomplete="street-address"><input id="cNip" type="text" inputmode="numeric"></div>
+<div class="cart-who" id="cartWho"><span class="cart-who-ic">&#128100;</span><span class="cart-who-name" id="cartWhoName"></span><button type="button" class="cart-who-edit" id="cartWhoEdit"></button></div></div>
+<div class="cart-stage" id="cartStage">
 <div class="cart-body" id="cartBody"></div>
 <div class="cart-foot"><div class="cart-warn" id="cartWarn"></div>
 <div class="kgwarn" id="cartKg"><span class="sym">&#9888;</span><span id="cartKgText"></span></div>
 <div class="cart-tot"><span class="lab" id="cartTotLab"></span><span><b><span id="cartTotal">0.00</span> PLN</b> <small id="cartIndic"></small></span></div>
 <div class="cart-actions"><button class="btn wa" id="waBtn" disabled></button><button class="btn mail" id="mailBtn" disabled></button><button class="btn primary" id="copyBtn" disabled></button></div>
-</div></div></div>
+</div></div>
+<div class="cart-gate" id="cartGate">
+<div class="cart-gate-card">
+<h4 id="gateTitle"></h4><p class="gate-sub" id="gateSub"></p>
+<div class="gate-seg" role="tablist"><button type="button" class="gate-seg-btn on" id="gateExisting"></button><button type="button" class="gate-seg-btn" id="gateNew"></button></div>
+<div class="gate-fields"><input id="cartCust" type="text" autocomplete="name">
+<div class="gate-newfields" id="newcustBox"><input id="cFirst" type="text" autocomplete="given-name"><input id="cSurname" type="text" autocomplete="family-name"><input id="cPhone" type="tel" autocomplete="tel"><input id="cEmail" type="email" autocomplete="email"><input id="cAddr" type="text" autocomplete="street-address"><input id="cNip" type="text" inputmode="numeric"></div></div>
+<div class="gate-err" id="gateErr"></div>
+<button type="button" class="btn primary gate-go" id="gateGo"></button>
+</div></div>
+</div></div>
 <div class="modal" id="sentModal"><div class="modal-card sent-card" role="alertdialog" aria-modal="true"><button class="modal-x" id="sentX" aria-label="Close">&times;</button>
 <div class="sent-tick">&#10003;</div><h3 id="sentTitle"></h3><p class="sent-what" id="sentWhat"></p>
 <p class="sent-when" id="sentWhen"></p><button type="button" class="btn primary" id="sentOk"></button></div></div>
@@ -717,7 +793,8 @@ const T={
   search:"Search products… (e.g. caviar, comté, sole)",cust:"Your name and surname *",
   products:"products",est:"items · est. total",indic:"indicative",clear:"Clear",mail:"Email",copy:"Copy",wa:"WhatsApp",
   waS:"WhatsApp",mailS:"Email",copyS:"Copy",extraS:"➕ Extra",
-  newcust:"🆕 New customer — add details",fFirst:"First name",fSurname:"Surname",fPhone:"Phone number",fEmail:"Email address",fAddr:"Delivery address",fNip:"NIP (for VAT invoice — optional)",
+  newcust:"🆕 New customer — add details",fFirst:"First name *",fSurname:"Surname *",fPhone:"Phone number *",fEmail:"Email address *",fAddr:"Delivery address *",fNip:"NIP (for VAT invoice — optional)",
+  gTitle:"Almost there — who's ordering?",gSub:"Tell us who you are so we can prepare and deliver your order. You only need to do this once.",gExist:"I'm a returning customer",gNew:"I'm a new customer",gGo:"See my order",gWho:"Ordering as",gEdit:"Edit",gReq:"Please complete the required fields.",gEmailErr:"Please enter a valid email address.",custG:"Your name and surname *",
   kgwarn:"Your order includes items sold by weight (per kg). The final price will vary with the actual product weight.",
   copied:"Order copied — paste it into your reply email",sheet:"Weekly Specials Sheet",
   nameReq:"Please add your name and surname first",
@@ -756,7 +833,8 @@ const T={
   search:"Szukaj produktów… (np. kawior, comté, sola)",cust:"Imię i nazwisko *",
   products:"produktów",est:"poz. · szac. suma",indic:"szacunkowo",clear:"Wyczyść",mail:"E-mail",copy:"Kopiuj",wa:"WhatsApp",
   waS:"WhatsApp",mailS:"E-mail",copyS:"Kopiuj",extraS:"➕ Dodatkowe",
-  newcust:"🆕 Nowy klient — podaj dane",fFirst:"Imię",fSurname:"Nazwisko",fPhone:"Numer telefonu",fEmail:"Adres e-mail",fAddr:"Adres dostawy",fNip:"NIP (do faktury VAT — opcjonalnie)",
+  newcust:"🆕 Nowy klient — podaj dane",fFirst:"Imię *",fSurname:"Nazwisko *",fPhone:"Numer telefonu *",fEmail:"Adres e-mail *",fAddr:"Adres dostawy *",fNip:"NIP (do faktury VAT — opcjonalnie)",
+  gTitle:"Jeszcze chwila — kto zamawia?",gSub:"Podaj swoje dane, abyśmy mogli przygotować i dostarczyć zamówienie. Wystarczy zrobić to raz.",gExist:"Jestem stałym klientem",gNew:"Jestem nowym klientem",gGo:"Zobacz zamówienie",gWho:"Zamawia",gEdit:"Zmień",gReq:"Uzupełnij wymagane pola.",gEmailErr:"Podaj prawidłowy adres e-mail.",custG:"Imię i nazwisko *",
   kgwarn:"Zamówienie zawiera produkty sprzedawane na wagę (za kg). Ostateczna cena zależy od rzeczywistej wagi produktu.",
   copied:"Zamówienie skopiowane — wklej je w odpowiedzi e-mail",sheet:"Cotygodniowa Oferta Specjalna",
   nameReq:"Najpierw podaj imię i nazwisko",
@@ -795,7 +873,8 @@ const T={
   search:"Rechercher un produit… (ex. caviar, comté, sole)",cust:"Vos nom et prénom *",
   products:"produits",est:"articles · total est.",indic:"indicatif",clear:"Effacer",mail:"E-mail",copy:"Copier",wa:"WhatsApp",
   waS:"WhatsApp",mailS:"E-mail",copyS:"Copier",extraS:"➕ En plus",
-  newcust:"🆕 Nouveau client — ajouter mes coordonnées",fFirst:"Prénom",fSurname:"Nom",fPhone:"Numéro de téléphone",fEmail:"Adresse e-mail",fAddr:"Adresse de livraison",fNip:"NIP (pour facture TVA — facultatif)",
+  newcust:"🆕 Nouveau client — ajouter mes coordonnées",fFirst:"Prénom *",fSurname:"Nom *",fPhone:"Numéro de téléphone *",fEmail:"Adresse e-mail *",fAddr:"Adresse de livraison *",fNip:"NIP (pour facture TVA — facultatif)",
+  gTitle:"Presque terminé — qui commande ?",gSub:"Indiquez-nous qui vous êtes afin de préparer et livrer votre commande. À faire une seule fois.",gExist:"Je suis un client habituel",gNew:"Je suis un nouveau client",gGo:"Voir ma commande",gWho:"Commande de",gEdit:"Modifier",gReq:"Veuillez remplir les champs obligatoires.",gEmailErr:"Veuillez saisir une adresse e-mail valide.",custG:"Vos nom et prénom *",
   kgwarn:"Votre commande contient des produits vendus au poids (au kg). Le prix final variera selon le poids réel des produits.",
   copied:"Commande copiée — collez-la dans votre e-mail",sheet:"Offre Spéciale de la Semaine",
   nameReq:"Merci d'indiquer d'abord vos nom et prénom",
@@ -855,15 +934,27 @@ const catEl=document.getElementById('catalogue'),chipsEl=document.getElementById
    SLIDES is filled during the catalogue render (one entry per product photo).
    Each entry: {img, it:<item>, c:<category>}. openSV(i) is called from a thumb. */
 const SLIDES=[];
+/* per-product cart handle so the viewer can add to cart: key -> {setQ,step,isKg} */
+const rowAPI={};
 const SWIPE_HINT={en:'Swipe, or use \u2039 \u203A / arrow keys to browse',
                  pl:'Przesuwaj palcem lub u\u017Cyj \u2039 \u203A / strza\u0142ek',
                  fr:'Balayez, ou utilisez \u2039 \u203A / les fl\u00E8ches'};
+const SV_INCART={en:'\u2713 In your order',pl:'\u2713 W zam\u00F3wieniu',fr:'\u2713 Dans votre commande'};
+const SV_FLAVMSG={en:'This product has flavours to choose \u2014 pick them in the list.',
+                 pl:'Ten produkt ma smaki do wyboru \u2014 wybierz je na li\u015Bcie.',
+                 fr:'Ce produit a des parfums au choix \u2014 s\u00E9lectionnez-les dans la liste.'};
+const SV_FLAVBTN={en:'Choose in the list',pl:'Wybierz na li\u015Bcie',fr:'Choisir dans la liste'};
 const sv=document.getElementById('sv'),svImg=document.getElementById('svImg'),
  svCat=document.getElementById('svCat'),svName=document.getElementById('svName'),
  svMeta=document.getElementById('svMeta'),svPrice=document.getElementById('svPrice'),
  svCount=document.getElementById('svCount'),svPrev=document.getElementById('svPrev'),
  svNext=document.getElementById('svNext'),svFrame=document.getElementById('svFrame'),
- svHint=document.getElementById('svHint');
+ svHint=document.getElementById('svHint'),svQtyWrap=document.getElementById('svQtyWrap'),
+ svInp=document.getElementById('svInp'),svMinus=document.getElementById('svMinus'),
+ svPlus=document.getElementById('svPlus'),svKg=document.getElementById('svKg'),
+ svAdded=document.getElementById('svAdded'),svFlavNote=document.getElementById('svFlavNote'),
+ svFlavTxt=document.getElementById('svFlavTxt'),svFlavBtn=document.getElementById('svFlavBtn'),
+ svCart=document.getElementById('svCart');
 let svIdx=0;
 function renderSV(){
  const s=SLIDES[svIdx];if(!s)return;const it=s.it,c=s.c;
@@ -883,7 +974,34 @@ function renderSV(){
  svCount.textContent=(svIdx+1)+' / '+SLIDES.length;
  svPrev.disabled=svIdx<=0;svNext.disabled=svIdx>=SLIDES.length-1;
  svHint.textContent=SWIPE_HINT[lang]||SWIPE_HINT.en;
+ /* ---- add-to-cart region ---- */
+ if(it.fl){                                   /* flavour group: send them to the list */
+  svCart.style.display='none';svFlavNote.style.display='';
+  svFlavTxt.textContent=SV_FLAVMSG[lang]||SV_FLAVMSG.en;
+  svFlavBtn.textContent=SV_FLAVBTN[lang]||SV_FLAVBTN.en;
+ }else{
+  svFlavNote.style.display='none';svCart.style.display='';
+  svKg.style.display=isKg?'':'none';
+  svInp.step=isKg?(it.w||'any'):'1';svInp.inputMode=isKg?'decimal':'numeric';
+  const q=(state[s.key]&&state[s.key].qty)||0;
+  svInp.value=fmtQ(q);
+  svAdded.textContent=q>0?(SV_INCART[lang]||SV_INCART.en):'';
+ }
 }
+function svCurKey(){return SLIDES[svIdx]?SLIDES[svIdx].key:null;}
+function svRefreshAdded(){const k=svCurKey();if(!k)return;const q=(state[k]&&state[k].qty)||0;
+ svInp.value=fmtQ(q);svAdded.textContent=q>0?(SV_INCART[lang]||SV_INCART.en):'';}
+svMinus.onclick=()=>{const k=svCurKey(),a=rowAPI[k];if(!a)return;a.setQ(state[k].qty-a.step);svRefreshAdded();};
+svPlus.onclick=()=>{const k=svCurKey(),a=rowAPI[k];if(!a)return;a.setQ(state[k].qty+a.step);svRefreshAdded();};
+svInp.onfocus=()=>svInp.select();
+svInp.oninput=()=>{const k=svCurKey(),a=rowAPI[k];if(!a)return;
+ let v=a.isKg?parseFloat(svInp.value):parseInt(svInp.value);v=isNaN(v)?0:Math.max(0,v);
+ a.setQ(v);svAdded.textContent=state[k].qty>0?(SV_INCART[lang]||SV_INCART.en):'';};
+svInp.onblur=()=>svRefreshAdded();
+svFlavBtn.onclick=()=>{const k=svCurKey();closeSV();
+ const row=document.querySelector('[data-key="'+k+'"]');
+ if(row){row.scrollIntoView({behavior:'smooth',block:'center'});
+  row.classList.add('flash');setTimeout(()=>row.classList.remove('flash'),1400);}};
 function openSV(i){if(!SLIDES.length)return;svIdx=Math.max(0,Math.min(SLIDES.length-1,i));
  svFrame.style.transition='none';svFrame.style.transform='';svFrame.style.opacity='';
  renderSV();sv.classList.add('show');sv.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
@@ -980,7 +1098,7 @@ CATEGORIES.forEach(c=>{
   const noteAll=LANGS.map(l=>noteIn(it.note,l)).join(' ');
   row.dataset.search=normStr(it.n+' '+(it.pl||'')+' '+(it.en||'')+' '+(it.c||'')+' '+(it.o||'')+' '+noteAll+' '+(it.fl?it.fl.map(f=>f.n+' '+(f.c||'')).join(' '):''));
   let thumb;
-  if(it.img){const sidx=SLIDES.length;SLIDES.push({img:it.img,it:it,c:c});thumb=document.createElement('img');thumb.className='thumb';thumb.loading='lazy';thumb.src=it.img;thumb.alt=it.n;thumb.style.cursor='zoom-in';thumb.addEventListener('click',()=>openSV(sidx));}
+  if(it.img){const sidx=SLIDES.length;SLIDES.push({img:it.img,it:it,c:c,key:key});thumb=document.createElement('img');thumb.className='thumb';thumb.loading='lazy';thumb.src=it.img;thumb.alt=it.n;thumb.style.cursor='zoom-in';thumb.addEventListener('click',()=>openSV(sidx));}
   else{thumb=document.createElement('div');thumb.className='thumb ph';thumb.textContent=it.n.trim().charAt(0).toUpperCase();}
   const left=document.createElement('div');left.className='pinfo';
   const badge=it.b?'<span class="badge '+it.b+'">'+it.b+'</span>':'';
@@ -1004,6 +1122,7 @@ CATEGORIES.forEach(c=>{
   qty.append(minus,inp,plus);
   if(isKg){const kg=document.createElement('span');kg.className='qkg';kg.textContent='kg';kg.setAttribute('aria-hidden','true');qty.append(kg);}
   const setQ=v=>{v=isKg?Math.max(0,Math.round(v*1000)/1000):Math.max(0,Math.round(v));state[key].qty=v;clampAlloc(state[key]);inp.value=fmtQ(v);row.classList.toggle('active',v>0);recalc();};
+  rowAPI[key]={setQ:setQ,step:step,isKg:isKg};
   minus.onclick=()=>setQ(state[key].qty-step);
   plus.onclick=()=>setQ(state[key].qty+step);
   inp.onfocus=()=>inp.select();
@@ -1217,18 +1336,66 @@ waBtn.onclick=()=>{if(!requireFlavors()||!requireName())return;const txt=buildOr
  window.open('https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(txt),'_blank');
  showSent('sentWa');};
 document.getElementById('cust').addEventListener('input',function(){this.classList.remove('shake');if(this.value.trim()){this.classList.remove('err');hideNamePop();}});
-document.getElementById('newcustToggle').onclick=function(){
- const box=document.getElementById('newcustBox');const open=box.classList.toggle('show');
- this.classList.toggle('open',open);this.setAttribute('aria-expanded',open);};
-
 // ---------- cart ----------
 const cartModal=document.getElementById('cartModal'),cartBody=document.getElementById('cartBody');
+const cartCard=document.getElementById('cartCard');
 const cartCust=document.getElementById('cartCust'),custMain=document.getElementById('cust');
 cartCust.addEventListener('input',()=>{custMain.value=cartCust.value;cartCust.classList.remove('shake');
- if(cartCust.value.trim()){cartCust.classList.remove('err');custMain.classList.remove('err');hideNamePop();}});
+ if(cartCust.value.trim()){cartCust.classList.remove('err');custMain.classList.remove('err');hideGateErr();}});
 custMain.addEventListener('input',()=>{cartCust.value=custMain.value;});
-function openCart(){cartCust.value=custMain.value;renderCart();cartModal.classList.add('show');requestAnimationFrame(fitCart);}
-function closeCart(){cartModal.classList.remove('show');hideNamePop();}
+
+/* ===== checkout details gate ===== */
+const newcustBox=document.getElementById('newcustBox');
+const cartGate=document.getElementById('cartGate'),gateExisting=document.getElementById('gateExisting'),
+ gateNew=document.getElementById('gateNew'),gateGo=document.getElementById('gateGo'),
+ gateErrEl=document.getElementById('gateErr'),cartWho=document.getElementById('cartWho'),
+ cartWhoName=document.getElementById('cartWhoName'),cartWhoEdit=document.getElementById('cartWhoEdit');
+const NEWFIELDS=['cFirst','cSurname','cPhone','cEmail','cAddr'];   /* required; cNip optional */
+let detailsConfirmed=false,gateMode='existing';
+function hideGateErr(){gateErrEl.classList.remove('show');gateErrEl.textContent='';}
+function showGateErr(msg){gateErrEl.textContent=msg;gateErrEl.classList.add('show');}
+function setGateMode(m){gateMode=m;
+ gateExisting.classList.toggle('on',m==='existing');gateNew.classList.toggle('on',m==='new');
+ const isNew=m==='new';
+ newcustBox.classList.toggle('show',isNew);
+ cartCust.style.display=isNew?'none':'';        /* single name for returning; first+surname for new */
+ hideGateErr();
+ setTimeout(()=>{(isNew?document.getElementById('cFirst'):cartCust).focus();},30);}
+gateExisting.onclick=()=>setGateMode('existing');
+gateNew.onclick=()=>setGateMode('new');
+/* clear the red outline as the customer types */
+[cartCust,...NEWFIELDS.map(id=>document.getElementById(id)),document.getElementById('cNip')].forEach(el=>{
+ if(el)el.addEventListener('input',()=>{el.classList.remove('err');hideGateErr();});});
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function submitGate(){
+ hideGateErr();let firstBad=null,msg='';
+ if(gateMode==='existing'){
+  if(!cartCust.value.trim()){cartCust.classList.add('err');firstBad=cartCust;msg=T[lang].gReq;}
+  else custMain.value=cartCust.value.trim();
+ }else{
+  NEWFIELDS.forEach(id=>{const el=document.getElementById(id);
+   if(!el.value.trim()){el.classList.add('err');if(!firstBad){firstBad=el;msg=T[lang].gReq;}}});
+  const em=document.getElementById('cEmail');
+  if(!firstBad&&em.value.trim()&&!EMAIL_RE.test(em.value.trim())){em.classList.add('err');firstBad=em;msg=T[lang].gEmailErr;}
+  if(!firstBad){const full=(document.getElementById('cFirst').value.trim()+' '+document.getElementById('cSurname').value.trim()).trim();
+   custMain.value=full;cartCust.value=full;}
+ }
+ if(firstBad){showGateErr(msg);
+  firstBad.classList.remove('shake');void firstBad.offsetWidth;firstBad.classList.add('shake');firstBad.focus();return;}
+ detailsConfirmed=true;cartCard.classList.remove('gated');
+ showWho();updateCartFoot();requestAnimationFrame(fitCart);}
+gateGo.onclick=submitGate;
+function showWho(){const nm=(custMain.value||cartCust.value||'').trim();
+ cartWhoName.textContent=nm;cartWho.classList.toggle('show',!!nm&&detailsConfirmed);}
+function openGate(){cartCard.classList.add('gated');hideGateErr();
+ setGateMode(gateMode);cartWho.classList.remove('show');}
+cartWhoEdit.onclick=openGate;
+
+function openCart(){cartCust.value=custMain.value;renderCart();
+ if(detailsConfirmed){cartCard.classList.remove('gated');showWho();}
+ else{showWho();openGate();}
+ cartModal.classList.add('show');requestAnimationFrame(fitCart);}
+function closeCart(){cartModal.classList.remove('show');hideNamePop();hideGateErr();}
 cartBtn.onclick=openCart;
 document.getElementById('cartX').onclick=closeCart;
 cartModal.addEventListener('click',e=>{if(e.target===cartModal)closeCart();});
@@ -1313,7 +1480,7 @@ function updateCartFoot(){
  const bad=flavPending().length>0;
  document.getElementById('cartWarn').classList.toggle('show',bad);
  const empty=t===0&&!getExtras().length;
- [copyBtn,mailBtn,waBtn].forEach(b=>b.disabled=empty||bad);}
+ [copyBtn,mailBtn,waBtn].forEach(b=>b.disabled=empty||bad||!detailsConfirmed);}
 
 const extraModal=document.getElementById('extraModal'),extraTa=document.getElementById('extraText');
 if(extraTa&&!extraTa.value.trim())extraTa.value=EXTRA_DEFAULT;
@@ -1344,7 +1511,12 @@ function setLang(l){if(!T[l])l='en';lang=l;
  document.getElementById('vatbar').textContent=t.vat;
  document.getElementById('search').placeholder=t.search;
  document.getElementById('cust').placeholder=t.cust;
- document.getElementById('newcustToggle').textContent=t.newcust;
+ document.getElementById('gateTitle').textContent=t.gTitle;
+ document.getElementById('gateSub').textContent=t.gSub;
+ document.getElementById('gateExisting').textContent=t.gExist;
+ document.getElementById('gateNew').textContent=t.gNew;
+ document.getElementById('gateGo').textContent=t.gGo;
+ document.getElementById('cartWhoEdit').textContent=t.gEdit;
  document.getElementById('cFirst').placeholder=t.fFirst;
  document.getElementById('cSurname').placeholder=t.fSurname;
  document.getElementById('cPhone').placeholder=t.fPhone;
@@ -1357,7 +1529,9 @@ function setLang(l){if(!T[l])l='en';lang=l;
  document.getElementById('clearBtn').textContent=t.clear;
  document.getElementById('cartTitle').textContent=t.cartTitle;
  document.getElementById('cartDesc').textContent=t.cartDesc;
- document.getElementById('cartCust').placeholder=t.cust;
+ document.getElementById('cartCust').placeholder=t.custG;
+ if(typeof detailsConfirmed!=='undefined'&&detailsConfirmed&&cartWhoName){
+  const nm=(custMain.value||'').trim();cartWhoName.textContent=nm;}
  document.getElementById('cartTotLab').textContent=t.totalLbl;
  document.getElementById('cartIndic').textContent=t.indic;
  document.getElementById('cartKgText').textContent=t.kgwarn;
