@@ -2175,7 +2175,8 @@ setLang('fr');initView();recalc();placeSide();fitBar();
 .dpmodal.show{display:flex}
 .dpcard{background:#fff;color:#1a1a1a;border-radius:16px;width:min(560px,100%);max-height:92vh;max-height:92dvh;overflow-y:auto;
  overscroll-behavior:contain;position:relative;box-shadow:0 18px 50px rgba(0,0,0,.45);padding:0 0 18px}
-.dphead{background:var(--navy,#1b2a4a);color:#fff;padding:20px 22px 16px;border-radius:16px 16px 0 0}
+.dphead{background:var(--navy,#1b2a4a);color:#fff;padding:20px 22px 16px;border-radius:0}
+.dpcard{background:linear-gradient(var(--navy,#1b2a4a),var(--navy,#1b2a4a)) top/100% 48px no-repeat local,#fff;border:none;background-clip:padding-box}
 .dphead h3{margin:0;font-family:Georgia,'Times New Roman',serif;font-size:1.3rem}
 .dphead p{margin:5px 0 0;font-size:.84rem;color:#d7ddea}
 .dpx{position:absolute;top:8px;right:10px;background:none;border:none;color:#fff;font-size:1.8rem;line-height:1;cursor:pointer;padding:4px 8px;border-radius:8px}
@@ -2199,7 +2200,7 @@ setLang('fr');initView();recalc();placeSide();fitBar();
  .dpbar{font-size:.76rem;padding:8px 12px;gap:7px}
  .dpmodal{padding:0;align-items:flex-end}
  .dpcard{border-radius:18px 18px 0 0;max-height:94dvh;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
- .dphead{border-radius:18px 18px 0 0;padding:18px 18px 14px}
+ .dphead{border-radius:0;padding:18px 18px 14px}
  .dphead h3{font-size:1.18rem}
  .dpsteps{padding:0 14px}.dpnews,.dpcontact{margin-left:14px;margin-right:14px}
  .dpok{width:calc(100% - 28px);margin:12px 14px 0}
@@ -2254,25 +2255,25 @@ setLang('fr');initView();recalc();placeSide();fitBar();
 (function(){
  var DP={
   en:{bar:"Delivery & Payment",go:"How it works ›",title:"Delivery & Payment",sub:"Fresh from France every Thursday — here's how it works.",
-   news:["Minimum order: 150 zł.","Card payment on delivery for all Warsaw deliveries.","Delivery anywhere outside Warsaw (Kraków, Poznań, Łódź, Wrocław, Tri-city and the rest of Poland): from 37 zł + VAT."],
+   news:["Minimum order: 150 zł.","Warsaw: pay on delivery by cash or card.","Delivery anywhere outside Warsaw (Kraków, Poznań, Łódź, Wrocław, Tri-city and the rest of Poland): from 37 zł + VAT."],
    s1t:"🛒 Select your products",s1p:"Browse and build your basket on this order platform, then send it to us by email or WhatsApp any time until Sunday night for next-week delivery. Minimum order 150 zł. Please be specific and clear when placing your order.",
-   s2t:"🚛 Speedy delivery from France",s2p:"Your order arrives in Warsaw fresh from France on Wednesday and is processed and packed in recycled boxes, ready to go.",
+   s2t:"🚛 Speedy delivery from France",s2p:"Your order arrives in Warsaw fresh from France on Wednesday and is processed and packed in recycled boxes, ready to go. Occasionally an item may be unavailable — if so, we will contact you on Tuesday, where possible, to propose a replacement.",
    s3t:"🎁 Get your delivery",s3p:"Our driver delivers in Warsaw on Thursday, 09:00–15:00. Deliveries outside Warsaw arrive on Friday (from 37 zł + VAT). Contact us for special requests.",
-   s4t:"💳 Payment",s4p:"Warsaw deliveries: card payment on delivery via our card terminals. Otherwise, payment by bank transfer once your order is received.",
+   s4t:"💳 Payment",s4p:"Warsaw deliveries: pay on delivery by cash or card (we carry card terminals). Outside Warsaw: payment by bank transfer once your order is received.",
    cl:"Order & contact",ok:"Start ordering"},
   pl:{bar:"Dostawa i płatność",go:"Jak to działa ›",title:"Dostawa i płatność",sub:"Świeże produkty z Francji w każdy czwartek — tak to działa.",
-   news:["Minimalna wartość zamówienia: 150 zł.","Płatność kartą przy odbiorze dla wszystkich dostaw w Warszawie.","Dostawa poza Warszawę (Kraków, Poznań, Łódź, Wrocław, Trójmiasto i reszta Polski): od 37 zł + VAT."],
+   news:["Minimalna wartość zamówienia: 150 zł.","Warszawa: płatność przy odbiorze gotówką lub kartą.","Dostawa poza Warszawę (Kraków, Poznań, Łódź, Wrocław, Trójmiasto i reszta Polski): od 37 zł + VAT."],
    s1t:"🛒 Wybierz produkty",s1p:"Przeglądaj ofertę i skompletuj koszyk na tej platformie, a następnie wyślij go do nas e-mailem lub przez WhatsApp do niedzieli wieczorem — dostawa w kolejnym tygodniu. Minimalna wartość zamówienia to 150 zł. Prosimy o precyzyjne i jasne zamówienie.",
-   s2t:"🚛 Szybka dostawa z Francji",s2p:"Twoje zamówienie dociera świeże z Francji do Warszawy w środę, gdzie jest przygotowywane i pakowane w kartony z recyklingu.",
+   s2t:"🚛 Szybka dostawa z Francji",s2p:"Twoje zamówienie dociera świeże z Francji do Warszawy w środę, gdzie jest przygotowywane i pakowane w kartony z recyklingu. Czasami niektóre produkty mogą być niedostępne — w takim przypadku, jeśli to możliwe, skontaktujemy się z Tobą we wtorek, aby zaproponować zamiennik.",
    s3t:"🎁 Odbierz dostawę",s3p:"Nasz kierowca dostarcza zamówienia w Warszawie w czwartek w godz. 09:00–15:00. Dostawy poza Warszawę docierają w piątek (od 37 zł + VAT). W sprawie indywidualnych życzeń prosimy o kontakt.",
-   s4t:"💳 Płatność",s4p:"Dostawy w Warszawie: płatność kartą przy odbiorze (terminal płatniczy). W pozostałych przypadkach — przelew bankowy po otrzymaniu zamówienia.",
+   s4t:"💳 Płatność",s4p:"Dostawy w Warszawie: płatność przy odbiorze gotówką lub kartą (mamy terminal płatniczy). Poza Warszawą: przelew bankowy po otrzymaniu zamówienia.",
    cl:"Zamówienia i kontakt",ok:"Przejdź do zamówienia"},
   fr:{bar:"Livraison & paiement",go:"Comment ça marche ›",title:"Livraison & paiement",sub:"Arrivage de France chaque jeudi — voici comment ça marche.",
-   news:["Commande minimum : 150 zł.","Paiement par carte à la livraison pour toutes les livraisons à Varsovie.","Livraison hors de Varsovie (Cracovie, Poznań, Łódź, Wrocław, Tricité et reste de la Pologne) : à partir de 37 zł HT."],
+   news:["Commande minimum : 150 zł.","Varsovie : paiement à la livraison en espèces ou par carte.","Livraison hors de Varsovie (Cracovie, Poznań, Łódź, Wrocław, Tricité et reste de la Pologne) : à partir de 37 zł HT."],
    s1t:"🛒 Choisissez vos produits",s1p:"Parcourez l'offre et composez votre panier sur cette plateforme, puis envoyez-le-nous par e-mail ou WhatsApp jusqu'au dimanche soir pour une livraison la semaine suivante. Commande minimum : 150 zł. Merci d'être précis et clair dans votre commande.",
-   s2t:"🚛 Livraison rapide depuis la France",s2p:"Votre commande arrive fraîche de France à Varsovie le mercredi, où elle est préparée et emballée dans des cartons recyclés.",
+   s2t:"🚛 Livraison rapide depuis la France",s2p:"Votre commande arrive fraîche de France à Varsovie le mercredi, où elle est préparée et emballée dans des cartons recyclés. Il arrive qu'un article soit manquant — dans ce cas, nous vous contacterons le mardi, dans la mesure du possible, pour vous proposer un remplacement.",
    s3t:"🎁 Recevez votre livraison",s3p:"Notre chauffeur livre à Varsovie le jeudi, de 9h00 à 15h00. Les livraisons hors de Varsovie arrivent le vendredi (à partir de 37 zł HT). Contactez-nous pour toute demande particulière.",
-   s4t:"💳 Paiement",s4p:"Livraisons à Varsovie : paiement par carte à la livraison via nos terminaux. Sinon, paiement par virement bancaire à réception de votre commande.",
+   s4t:"💳 Paiement",s4p:"Livraisons à Varsovie : paiement à la livraison en espèces ou par carte (terminal de paiement). Hors de Varsovie : paiement par virement bancaire à réception de votre commande.",
    cl:"Commandes & contact",ok:"Commencer ma commande"}
  };
  var modal=document.getElementById('dpModal'),hdr=document.querySelector('header');
