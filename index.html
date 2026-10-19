@@ -2463,4 +2463,14 @@ setLang('fr');initView();recalc();placeSide();fitBar();
 })();
 </script>
 <!-- ===== END Christmas teaser banner ===== -->
+<script>
+/* list / grid toggle switches the moment the button is pressed, not on release.
+   Keyboard (Enter/Space) still works through the normal click. */
+(function(){
+ [['viewList','list'],['viewGrid','grid']].forEach(function(p){
+  var b=document.getElementById(p[0]);if(!b)return;
+  b.addEventListener('pointerdown',function(e){if(e.button!==0)return;setView(p[1],true);});
+ });
+})();
+</script>
 </body></html>
