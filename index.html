@@ -2513,27 +2513,43 @@ setLang('fr');initView();recalc();placeSide();fitBar();
      show it and never run the animation. To remove after the season, delete from here to the
      matching END marker. ===== -->
 <style>
-.xmas{display:none;position:relative;height:130px;overflow:hidden;background:#8b1a1a;border-bottom:2px solid #c9a227}
+.xmas{display:none;position:relative;height:176px;overflow:hidden;background:#8b1a1a;border-bottom:2px solid #c9a227}
 @media (min-width:900px){.xmas{display:block}}
 .xmas canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .xmas-tx{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
  text-align:center;pointer-events:none;padding:0 20px}
 .xmas-t1{font-family:Georgia,'Times New Roman',serif;font-size:1.98rem;line-height:1.15;color:#fdf7e3;text-shadow:0 1px 12px rgba(50,0,0,.35)}
 .xmas-t2{margin-top:9px;font-size:.86rem;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:#e6c35a}
+/* the button that opens the Christmas order page (noel.html, same folder) */
+.xmas-go{margin-top:13px;pointer-events:auto;display:inline-flex;align-items:center;gap:8px;background:#c9a227;color:#3d0808;text-decoration:none;
+ font-size:.95rem;font-weight:800;letter-spacing:.03em;padding:9px 22px;border-radius:999px;box-shadow:0 4px 14px rgba(40,0,0,.4);
+ transition:transform 120ms cubic-bezier(.23,1,.32,1),background-color 150ms ease}
+@media (hover:hover) and (pointer:fine){.xmas-go:hover{background:#e6c35a;transform:translateY(-1px)}}
+.xmas-go:active{transform:scale(.97)}
+/* phones / tablets: no banner, just a slim static link to the Christmas page */
+.noelstrip{display:flex;align-items:center;justify-content:center;gap:8px;background:#8b1a1a;color:#fdf7e3;text-decoration:none;
+ font-size:.84rem;font-weight:700;padding:10px 14px;border-bottom:2px solid #c9a227;text-align:center;line-height:1.25}
+.noelstrip b{color:#f1cf6b;font-weight:800;white-space:nowrap}
+@media (min-width:900px){.noelstrip{display:none}}
 </style>
 <script>
 (function(){
- var TX={en:["Something festive is on its way","Christmas offer · coming soon"],
-         pl:["Coś świątecznego jest już w drodze","Oferta świąteczna · już wkrótce"],
-         fr:["Quelque chose de festif se prépare","Offre de Noël · prochainement"]};
+ var NOEL_URL='noel.html';
+ var TX={en:["The Christmas Offer 2026 is here","Festive selection · order now","See the Christmas offer ›","Christmas Offer 2026"],
+         pl:["Oferta Świąteczna 2026 już jest","Świąteczna selekcja · zamów teraz","Zobacz ofertę świąteczną ›","Oferta Świąteczna 2026"],
+         fr:["L'Offre de Noël 2026 est arrivée","Sélection de fêtes · commandez dès maintenant","Découvrir l'offre de Noël ›","Offre de Noël 2026"]};
  var hdr=document.querySelector('header');if(!hdr)return;
- var el=document.createElement('div');el.className='xmas';el.id='xmas';el.setAttribute('role','img');
- el.innerHTML='<canvas aria-hidden="true"></canvas><div class="xmas-tx"><div class="xmas-t1" id="xmT1"></div><div class="xmas-t2" id="xmT2"></div></div>';
+ var el=document.createElement('div');el.className='xmas';el.id='xmas';
+ el.innerHTML='<canvas aria-hidden="true"></canvas><div class="xmas-tx"><div class="xmas-t1" id="xmT1"></div><div class="xmas-t2" id="xmT2"></div><a class="xmas-go" id="xmGo"></a></div>';
  hdr.insertAdjacentElement('afterend',el);
+ var strip=document.createElement('a');strip.className='noelstrip';strip.href=NOEL_URL;strip.innerHTML='<span aria-hidden="true">\uD83C\uDF84</span><span id="xmS1"></span><b id="xmS2"></b>';
+ hdr.insertAdjacentElement('afterend',strip);
+ document.getElementById('xmGo').href=NOEL_URL;
  var cv=el.querySelector('canvas'),ctx=cv.getContext('2d');
  function L(){try{return (typeof lang!=='undefined'&&TX[lang])?lang:'fr';}catch(e){return 'fr';}}
  function paint(){var t=TX[L()];document.getElementById('xmT1').textContent=t[0];document.getElementById('xmT2').textContent=t[1];
-  el.setAttribute('aria-label',t[0]+': '+t[1]);if(typeof textBox==='function')textBox();}
+  document.getElementById('xmGo').textContent=t[2];document.getElementById('xmS1').textContent=t[3];document.getElementById('xmS2').textContent=t[2];
+  if(typeof textBox==='function')textBox();}
  if(typeof window.setLang==='function'){var _sl=window.setLang;window.setLang=function(){var r=_sl.apply(this,arguments);paint();return r;};}
  paint();
 
