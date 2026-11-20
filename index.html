@@ -2603,4 +2603,167 @@ setLang('fr');initView();recalc();placeSide();fitBar();
 })();
 </script>
 <!-- ===== END Christmas teaser banner ===== -->
+<style>
+:root{--mdptop:46px}
+#mdpbar{position:fixed;top:0;left:0;right:0;height:var(--mdptop);z-index:70;
+ display:flex;align-items:center;gap:10px;padding:0 12px;
+ background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#mdpbar .mb-logo{font-weight:700;font-size:.82rem;letter-spacing:.06em;white-space:nowrap;opacity:.95}
+#mdpbar .mb-sp{flex:1 1 auto}
+#mdpbar button,#mdpbar a{font:inherit;cursor:pointer;border-radius:7px;border:1px solid rgba(255,255,255,.34);
+ background:transparent;color:#fff;padding:5px 9px;font-size:.76rem;font-weight:600;
+ text-decoration:none;white-space:nowrap;line-height:1}
+#mdpbar button:hover,#mdpbar a:hover{background:rgba(255,255,255,.14)}
+#mdpbar .mb-lang{display:flex;gap:0;border:1px solid rgba(255,255,255,.34);border-radius:7px;overflow:hidden}
+#mdpbar .mb-lang button{border:0;border-radius:0;padding:5px 8px}
+#mdpbar .mb-lang button.on{background:#fff;color:var(--navy)}
+#mdpbar .mb-switch{background:rgba(255,255,255,.16)}
+body{padding-top:var(--mdptop)}
+.controls{top:var(--mdptop) !important}
+/* the bar now owns the language toggle, so the one in the page header is redundant */
+header .langtog{display:none}
+#mdpTop{position:fixed;right:14px;z-index:62;width:42px;height:42px;border-radius:50%;
+ border:0;cursor:pointer;background:var(--navy);color:#fff;font-size:1.1rem;line-height:1;
+ box-shadow:0 3px 12px rgba(0,0,0,.26);opacity:0;pointer-events:none;transition:opacity .2s;
+ bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+body.has-order #mdpTop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+#mdpTop.show{opacity:.94;pointer-events:auto}
+#mdpTop:hover{opacity:1}
+@media (max-width:560px){
+ #mdpbar{gap:7px;padding:0 8px}
+ #mdpbar .mb-logo{font-size:.72rem}
+ #mdpbar button,#mdpbar a{padding:5px 7px;font-size:.71rem}
+}
+</style>
+<script>
+(function(){
+ if(typeof CATEGORIES==='undefined'||typeof state==='undefined')return;
+ var IS_NOEL=/noel/i.test(location.pathname)||/noel/i.test(location.href.split('/').pop()||'');
+ var OTHER=IS_NOEL?'index.html':'noel.html';
+
+ /* ---------------- sticky top bar ---------------- */
+ var SW={en:IS_NOEL?'Weekly offer':'Christmas offer',
+         pl:IS_NOEL?'Oferta tygodnia':'Oferta świąteczna',
+         fr:IS_NOEL?'Offre de la semaine':'Offre de Noël'};
+ var TT={en:'Top',pl:'Do góry',fr:'Haut'};
+ var bar=document.createElement('div');bar.id='mdpbar';
+ bar.innerHTML='<span class="mb-logo">MDP</span><span class="mb-sp"></span>'
+  +'<div class="mb-lang"><button type="button" data-l="en">EN</button>'
+  +'<button type="button" data-l="pl">PL</button><button type="button" data-l="fr">FR</button></div>'
+  +'<a class="mb-switch" id="mdpSwitch" href="'+OTHER+'"></a>';
+ document.body.appendChild(bar);
+ var top=document.createElement('button');top.id='mdpTop';top.type='button';
+ top.innerHTML='&#8593;';document.body.appendChild(top);
+ top.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+
+ function paintBar(){
+  var l=(typeof lang!=='undefined'&&lang)||'fr';
+  bar.querySelectorAll('.mb-lang button').forEach(function(b){
+   b.classList.toggle('on',b.dataset.l===l);});
+  var sw=document.getElementById('mdpSwitch');
+  sw.textContent=SW[l]||SW.fr; sw.title=sw.textContent;
+  top.title=TT[l]||TT.fr; top.setAttribute('aria-label',top.title);
+ }
+ bar.querySelectorAll('.mb-lang button').forEach(function(b){
+  b.onclick=function(){if(typeof setLang==='function')setLang(b.dataset.l);paintBar();};});
+ if(typeof setLang==='function'){var _sl=setLang;setLang=function(l){_sl(l);paintBar();};}
+ paintBar();
+
+ /* the page sizes its scroll-spy off .controls; the bar sits above it */
+ if(typeof syncStickyTop==='function'){var _ss=syncStickyTop;
+  syncStickyTop=function(){var h=_ss();var b=bar.offsetHeight||46;
+   document.documentElement.style.setProperty('--stickytop',(h+b)+'px');return h+b;};
+  syncStickyTop();}
+ addEventListener('scroll',function(){top.classList.toggle('show',scrollY>420);},{passive:true});
+
+ /* ---------------- joint basket ---------------- */
+ var BK='mdp_basket_v1', TTL=7*24*3600*1000, CARRY_ID='mdp-carry';
+ var CL={en:'Also in your basket (from the other offer)',
+         pl:'Również w koszyku (z drugiej oferty)',
+         fr:'Également dans votre panier (de l\'autre offre)'};
+ function readBK(){
+  try{var r=JSON.parse(localStorage.getItem(BK)||'null');
+   if(!r||!r.lines||(Date.now()-(r.t||0))>TTL)return null;return r;}catch(e){return null;}
+ }
+ function writeBK(lines){
+  try{localStorage.setItem(BK,JSON.stringify({t:Date.now(),lines:lines}));}catch(e){}
+ }
+ /* state -> flat CODE-level lines */
+ function collect(){
+  var out=[];
+  Object.keys(state).forEach(function(k){
+   var s=state[k];if(!s||!(s.qty>0))return;var it=s.item;
+   if(typeof hasFlav==='function'&&hasFlav(s)){
+    (flLines(s)||[]).forEach(function(x){
+     var f=x.f||{};
+     out.push({c:(f.c||it.c||''),q:x.qty,p:(f.p!=null?f.p:it.p),
+               n:it.n+' - '+(f.n||''),pl:it.pl,en:it.en,pu:it.pu,sz:it.sz,kg:0});});
+   }else{
+    out.push({c:it.c||'',q:s.qty,p:it.p,n:it.n,pl:it.pl,en:it.en,
+              pu:it.pu,sz:it.sz,kg:s.isKg?1:0,w:it.w||null});}
+  });
+  return out.filter(function(x){return x.c;});
+ }
+ var saving=false;
+ function save(){if(saving)return;saving=true;
+  setTimeout(function(){saving=false;writeBK(collect());},60);}
+
+ /* code -> where it lives on THIS page */
+ var byCode={};
+ Object.keys(state).forEach(function(k){
+  var it=state[k].item;
+  if(it.c)byCode[String(it.c).toUpperCase()]={k:k};
+  (it.fl||[]).forEach(function(f,i){
+   if(f&&f.c)byCode[String(f.c).toUpperCase()]={k:k,fi:i};});
+ });
+
+ function setRow(k){
+  var s=state[k];var row=document.querySelector('.row[data-key="'+k+'"]');
+  if(!row)return;
+  var inp=row.querySelector('.qty input');
+  if(inp)inp.value=(typeof fmtQ==='function')?fmtQ(s.qty):s.qty;
+  row.classList.toggle('active',s.qty>0);
+ }
+ function restore(){
+  var r=readBK();if(!r)return;
+  var unknown=[],touched={},applied=0;
+  r.lines.forEach(function(L){
+   var hit=byCode[String(L.c).toUpperCase()];
+   if(!hit){unknown.push(L);return;}
+   var s=state[hit.k];if(!s)return;
+   if(hit.fi!=null&&typeof hasFlav==='function'&&hasFlav(s)){
+    s.fq=s.fq||{};s.fq[hit.fi]=L.q;
+    s.qty=(typeof flTotalQty==='function')?flTotalQty(s):L.q;
+    if(s.fi==null)s.fi=hit.fi;
+   }else{s.qty=L.q;}
+   touched[hit.k]=1;applied++;
+  });
+  Object.keys(touched).forEach(setRow);
+  if(unknown.length){
+   var cat={id:CARRY_ID,label:CL.en,labelPl:CL.pl,labelFr:CL.fr,
+            accent:'#6b6b6b',ink:'#fff',items:[]};
+   CATEGORIES.push(cat);
+   unknown.forEach(function(L,i){
+    var it={n:L.n,c:L.c,p:L.p||0,pu:L.pu||'pc',u:L.sz||'',sz:L.sz};
+    if(L.pl)it.pl=L.pl; if(L.en)it.en=L.en;
+    cat.items.push(it);
+    state[CARRY_ID+i]={item:it,cat:cat.label,qty:L.q,isKg:false,step:1,fi:null,fq:null};
+   });
+  }
+  if(applied||unknown.length){
+   if(typeof recalc==='function')recalc();
+   if(typeof renderCart==='function')renderCart();
+  }
+ }
+
+ /* mirror on every recalc; the page calls it after any basket change */
+ if(typeof recalc==='function'){var _rc=recalc;
+  recalc=function(){var v=_rc.apply(this,arguments);save();return v;};}
+ /* a completed order should not follow the customer to the other page */
+ if(typeof markSent==='function'){var _ms=markSent;
+  markSent=function(){try{localStorage.removeItem(BK);}catch(e){}return _ms.apply(this,arguments);};}
+
+ restore();
+})();
+</script>
 </body></html>
